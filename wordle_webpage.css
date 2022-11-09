@@ -1,0 +1,111 @@
+
+.header {
+    color: black;
+    font-family: 'Merriweather', serif;
+    font-size: 36px;
+    text-align: center;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    left: 0;
+    right: 0;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border: 1px solid lightgray;
+    margin: 0;
+
+}
+
+#main-section {
+    color: black;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+#Wordle {
+    border: 1px solid lightgray;
+    flex-grow: 1;
+    flex-shrink: 1;
+    text-align: center;
+    width: 50%
+}
+
+#Optimizer {
+    border: 1px solid lightgray;
+    flex-grow: 1;
+    flex-shrink:1;
+    text-align: center;
+    width: 50%;
+}
+
+
+h2 {
+    border-bottom: 1px solid lightgray;
+}
+
+#board-container {
+    /* border: 2px dashed black; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+}
+
+
+.row {
+    /* border: 2px solid red; */
+    display: flex;
+    
+}
+
+
+.tile {
+    border: 2px solid rgb(194, 194, 194);
+    margin: 2px;
+    font-size: 2.5 rem;
+    font-weight: 700;
+    height: 3rem;
+    width: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+
+#keyboard-container {
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.keyboard-button {
+    /* border: 2px solid red; */
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.5rem;
+    margin: 3px 1px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+
+
+
+.reveal-button {
+    font-size: 1rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    width: 350px;
+}
+
+#statistics {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.statistics-analysis {
+    padding: 5px;
+}

@@ -1,7 +1,7 @@
 # import time
 from statistics import pstdev
 
-starting_possible_solutions_file = open("../Text files/wordle_solutions.txt", "r")
+starting_possible_solutions_file = open("Text files/wordle_solutions.txt", "r")
 starting_possible_solutions_list = (starting_possible_solutions_file.read()).split("\n")[0:-1]
 for i in range(0, len(starting_possible_solutions_list)):
     word = starting_possible_solutions_list[i]
@@ -9,7 +9,7 @@ for i in range(0, len(starting_possible_solutions_list)):
 starting_possible_solutions_file.close()
 # print(starting_possible_solutions_list)
 
-possible_guesses_file = open("../Text files/wordle_guesses.txt", "r")
+possible_guesses_file = open("Text files/wordle_guesses.txt", "r")
 possible_guesses_list = (possible_guesses_file.read()).split("\n")[0:-1]
 for i in range(0, len(possible_guesses_list)):
     word = possible_guesses_list[i]
