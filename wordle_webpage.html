@@ -1,60 +1,68 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Wordle Optimizer</title>
         <link rel="stylesheet" href="wordle_webpage.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&display=swap" rel="stylesheet">
     </head>
+
+
     <body>
-        <div>
-            <header class="header">Wordle Optimizer</header>
-        </div>
+        <h1>Wordle Optimizer</h1>
+
         <div id="main-section">
+
+
+
             <div id="Wordle">
                 <h2>Wordle</h2>
-                <div id="board-container">
-                    <div class="row">
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
+                <div id="game-board">
+                    <div class="letter-row">
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
                     </div>
-                    <div class="row">
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
+                    <div class="letter-row">
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
                     </div>
-                    <div class="row">
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
+                    <div class="letter-row">
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
                     </div>
-                    <div class="row">
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
+                    <div class="letter-row">
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
                     </div>
-                    <div class="row">
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
+                    <div class="letter-row">
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
                     </div>
-                    <div class="row">
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
-                        <div class="tile"></div>
+                    <div class="letter-row">
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
+                        <div class="letter-box"></div>
                     </div>
 
                 </div>
@@ -95,8 +103,18 @@
                     </div>
 
                 </div>
+
+                <button id="random" class="btn">Random Game</button>
+                <button id="custom" class="btn">Custom Game</button>
             </div>
             
+
+
+
+
+
+
+
             <div id="Optimizer">
                 <h2>Optimizer</h2>
 
@@ -118,7 +136,9 @@
 
 
         </div>
-        
+
+        <script src="wordleOptimizerJS.js" type="module"></script>
+        <!-- <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script> -->
     </body>
     
 

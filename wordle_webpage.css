@@ -1,5 +1,5 @@
 
-.header {
+h1 {
     color: black;
     font-family: 'Merriweather', serif;
     font-size: 36px;
@@ -19,7 +19,6 @@
     color: black;
     display: flex;
     justify-content: space-between;
-
 }
 
 #Wordle {
@@ -28,6 +27,11 @@
     flex-shrink: 1;
     text-align: center;
     width: 50%
+}
+
+.btn {
+    margin-bottom: 100px;
+    margin-top: 20px;
 }
 
 #Optimizer {
@@ -43,8 +47,8 @@ h2 {
     border-bottom: 1px solid lightgray;
 }
 
-#board-container {
-    /* border: 2px dashed black; */
+#game-board {
+    /* border: 2px dashed green; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -52,17 +56,17 @@ h2 {
 }
 
 
-.row {
+.letter-row {
     /* border: 2px solid red; */
     display: flex;
     
 }
 
 
-.tile {
+.letter-box {
     border: 2px solid rgb(194, 194, 194);
     margin: 2px;
-    font-size: 2.5 rem;
+    font-size: 25px;
     font-weight: 700;
     height: 3rem;
     width: 3rem;
@@ -87,6 +91,7 @@ h2 {
     margin: 3px 1px;
     cursor: pointer;
     text-transform: uppercase;
+    min-width: 35px;
 }
 
 

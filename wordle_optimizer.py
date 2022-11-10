@@ -1,5 +1,5 @@
 # import time
-from statistics import pstdev
+from statistics import pstdev, stdev
 
 starting_possible_solutions_file = open("Text files/wordle_solutions.txt", "r")
 starting_possible_solutions_list = (starting_possible_solutions_file.read()).split("\n")[0:-1]
@@ -24,33 +24,34 @@ guesses = []
 
 
 def build_color_code(guess, solution):
-    # print(f"guess {guess} and solution {solution}")
+    # input("")
     # print(guess)
     # print(solution)
 
     color_code_arr = ['','','','','']
-    compared_solution = ['','','','','']
+    solution_without_greens = {}
 
     for i in range(0,5):
         if guess[i] == solution[i]:
             color_code_arr[i] = '2'
         elif guess[i] not in solution:
             color_code_arr[i] = '0'
-            compared_solution[i] = solution[i]
-        elif guess.count(guess[i]) <= solution.count(guess[i]):
-            color_code_arr[i] = '1'
-            compared_solution[i] = solution[i]
+            solution_without_greens.setdefault(solution[i],0)
+            solution_without_greens[solution[i]] += 1
         else:
-            compared_solution[i] = solution[i]
+            solution_without_greens.setdefault(solution[i],0)
+            solution_without_greens[solution[i]] += 1
+    # print(solution_without_greens)
+    # print(color_code_arr)
 
     for i in range(0,5):
         if color_code_arr[i] == '':
-            if guess[i] not in compared_solution:
+            if guess[i] not in solution_without_greens or solution_without_greens[guess[i]] == 0:
                 color_code_arr[i] = '0'
             else:
                 color_code_arr[i] = '1'
-                compared_solution.remove(guess[i])
-    # print(compared_solution)
+                solution_without_greens[guess[i]] -=1
+                
     # print(color_code_arr)
     return ''.join(color_code_arr)
 
@@ -203,3 +204,7 @@ def main():
 
 
 main()
+
+# print(calculate_std_dev(evaluate_word(['r','o','a','t','e'], starting_possible_solutions_list)))
+# print(find_optimal_words(starting_possible_solutions_list))
+# print(determine_possible_solutions(['r','o','a','t','e'],['r','a','i','n','y'], starting_possible_solutions_list))
