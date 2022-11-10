@@ -114,3 +114,12 @@ h2 {
 .statistics-analysis {
     padding: 5px;
 }
+
+#solutions-list {
+    font-size: 20px;
+    list-style-type: none;
+}
+
+#solutions-count {
+    font-size: 20px;
+}

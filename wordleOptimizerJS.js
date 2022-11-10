@@ -5,6 +5,8 @@ import {GUESSWORDS} from "./guess_words.js"
 
 
 const NUMBER_OF_GUESSES = 6;
+let possibleSolutions = [...SOLUTIONWORDS]
+console.log("number of possible solutions now: " + possibleSolutions.length)
 let guessesRemaining = NUMBER_OF_GUESSES;
 let currentGuess = [];
 let nextLetter = 0;
@@ -17,7 +19,7 @@ document.addEventListener("keyup", (e) => {
     if (guessesRemaining === 0) { return }
 
     let pressedKey = String(e.key)
-    console.log(pressedKey)
+    // console.log(pressedKey)
 
     if (pressedKey === "Backspace" && nextLetter !== 0) {
         deleteLetter()
@@ -53,16 +55,17 @@ document.getElementById("keyboard-container").addEventListener("click", (e) => {
 
     document.dispatchEvent(new KeyboardEvent("keyup", {'key': key}))
 })
-
 document.getElementById("random").addEventListener("click", (e) => {
     // const target = e.target
     
     guessesRemaining = NUMBER_OF_GUESSES;
+    possibleSolutions = [...SOLUTIONWORDS]
     currentGuess = [];
     nextLetter = 0;
     gameSolution = SOLUTIONWORDS[Math.floor(Math.random() * SOLUTIONWORDS.length)]
     resetKeyboard()
     resetGameboard()
+    resetOptimizer()
     console.log("new game")
     console.log("solution word: " + gameSolution)
 })
@@ -70,12 +73,53 @@ document.getElementById("custom").addEventListener("click", (e) => {
     guessesRemaining = NUMBER_OF_GUESSES;
     currentGuess = [];
     nextLetter = 0;
+    let possibleSolutions = [...SOLUTIONWORDS]
     // gameSolution = SOLUTIONWORDS[Math.floor(Math.random() * SOLUTIONWORDS.length)]
-    
+
     resetKeyboard()
     resetGameboard()
+    resetOptimizer()
     console.log("new game")
     console.log("solution word: " + gameSolution)
+})
+document.getElementById("possible-solutions-btn").addEventListener("click", (e) => {
+    resetOptimizer()
+
+    let division = document.getElementById("possible-solutions")
+    let count = document.createElement("div")
+    count.setAttribute('id', 'solutions-count')
+    count.textContent = `There are ${possibleSolutions.length} possible solutions:`
+    let list = document.createElement("ul")
+    list.setAttribute('id', 'solutions-list')
+    for (let i = 0; i < possibleSolutions.length; i++) {
+        let word = document.createElement("li")
+        word.textContent = possibleSolutions[i]
+        list.appendChild(word)
+    }
+    // list.textContent = possibleSolutions
+
+    count.append(list)    
+    division.append(count)
+})
+document.getElementById("next-guess-btn").addEventListener("click", (e) => {
+    resetOptimizer()
+
+    optimalGuesses = findOptimalWords(possibleSolutions)
+
+    let division = document.getElementById("next-guess")
+    let count = document.creadElement("div")
+    count.setAttribute('id', 'optimal-guess-count')
+    count.textContent = `There are ${optimalGuesses.length} equally optimal guesses:`
+    let list = document.createElement("ul")
+    list.setAttribute('id', 'optimal-guess-list')
+    for (let i = 0; i < optimalGuesses.length; i++) {
+        let word = document.createElement("li")
+        word.textContent = optimalGuesses[i]
+        list.appendChild(word)
+    }
+
+    count.append(list)
+    division.append(count)
 })
 
 function resetKeyboard() {
@@ -85,7 +129,6 @@ function resetKeyboard() {
         keys[i].style.color = ''
     }
 }
-
 function resetGameboard() {
     let rows = document.getElementsByClassName("letter-row")
     for (let i = 0; i < rows.length; i++) {
@@ -96,6 +139,11 @@ function resetGameboard() {
             boxes[j].style.border = '2px solid rgb(194, 194, 194)'
             boxes[j].textContent = ''
         }
+    }
+}
+function resetOptimizer() {
+    if (document.contains(document.getElementById("solutions-count"))) {
+        document.getElementById("solutions-count").remove()
     }
 }
 
@@ -115,7 +163,7 @@ function checkGuess() {
     for (const letter of currentGuess) {
         guessString += letter
     }
-    console.log("guess: " + guessString)
+    // console.log("guess: " + guessString)
     let solution = Array.from(gameSolution)
 
     // check if the guess is 5 letters long and in the guess word bank (i.e. is a valid guess)
@@ -130,11 +178,14 @@ function checkGuess() {
         return
     }
 
-    console.log(currentGuess)
-    console.log(solution)
+    possibleSolutions = determinePossibleSolutions(currentGuess,solution,possibleSolutions)
+    console.log("number of possible solutions now: " + possibleSolutions.length)
+
+    // console.log(currentGuess)
+    // console.log(solution)
 
     let colorCode = buildColorCode(currentGuess, solution)
-    console.log("color code: " + colorCode)
+    // console.log("color code: " + colorCode)
     changeBoardColors(colorCode, row)
     
 
@@ -192,7 +243,7 @@ function shadeKeyboard(letter, color) {
         if (elem.textContent === letter) {
             elem.style.color = 'white'
             let oldColor = elem.style.backgroundColor
-            console.log("old color" + oldColor)
+            // console.log("old color" + oldColor)
             if (oldColor === 'rgb(106, 170, 100)') {
                 return
             } else if (oldColor === 'rgb(181, 159, 59)' && color !== '2') {
@@ -314,7 +365,7 @@ function calculateStandardDeviation(buckets) {
 function findOptimalWords(possible_solutions_list) {
     let stdDevs = {}
 
-    possible_guesses_list.forEach(guess => {
+    GUESSWORDS.forEach(guess => {
         stdDevs[guess.join('')] = calculateStandardDeviation(evaluateWord(guess,possible_solutions_list))
     })
     let minStdDev = Math.min(...Object.values(stdDevs))
