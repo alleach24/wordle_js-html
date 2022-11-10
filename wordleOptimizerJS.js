@@ -9,8 +9,10 @@ let possibleSolutions = [...SOLUTIONWORDS]
 console.log("number of possible solutions now: " + possibleSolutions.length)
 let guessesRemaining = NUMBER_OF_GUESSES;
 let currentGuess = [];
+let previousGuess = '';
 let nextLetter = 0;
 let gameSolution = SOLUTIONWORDS[Math.floor(Math.random() * SOLUTIONWORDS.length)]
+let gameOver = false;
 
 console.log("solution word: " + gameSolution)
 
@@ -83,6 +85,7 @@ document.getElementById("custom").addEventListener("click", (e) => {
     console.log("solution word: " + gameSolution)
 })
 document.getElementById("possible-solutions-btn").addEventListener("click", (e) => {
+    if (gameOver) {return}
     resetOptimizer()
 
     let division = document.getElementById("possible-solutions")
@@ -102,24 +105,58 @@ document.getElementById("possible-solutions-btn").addEventListener("click", (e) 
     division.append(count)
 })
 document.getElementById("next-guess-btn").addEventListener("click", (e) => {
+    if (gameOver) {return}
     resetOptimizer()
 
-    optimalGuesses = findOptimalWords(possibleSolutions)
+    let optimalGuesses = findOptimalWords(possibleSolutions)
 
     let division = document.getElementById("next-guess")
-    let count = document.creadElement("div")
+    let count = document.createElement("div")
     count.setAttribute('id', 'optimal-guess-count')
-    count.textContent = `There are ${optimalGuesses.length} equally optimal guesses:`
     let list = document.createElement("ul")
     list.setAttribute('id', 'optimal-guess-list')
-    for (let i = 0; i < optimalGuesses.length; i++) {
+
+    if (possibleSolutions.length == 1) {
+        count.textContent = `There is a single optimal guess:`
         let word = document.createElement("li")
-        word.textContent = optimalGuesses[i]
+        word.textContent = possibleSolutions[0]
         list.appendChild(word)
+    } else if (possibleSolutions.length == 2) {
+        count.textContent = `There are 2 equally optimal guesses:`
+        let word1 = document.createElement("li")
+        word1.textContent = possibleSolutions[0]
+        list.appendChild(word1)
+        let word2 = document.createElement("li")
+        word2.textContent = possibleSolutions[1]
+        list.appendChild(word2)
+    } else {
+        if (optimalGuesses.length == 1) {
+            count.textContent = `There is a single optimal guess:`
+        } else {     
+            count.textContent = `There are ${optimalGuesses.length} equally optimal guesses:`
+        }
+        for (let i = 0; i < optimalGuesses.length; i++) {
+            let word = document.createElement("li")
+            word.textContent = optimalGuesses[i]
+            list.appendChild(word)
+        }
     }
 
+    
+    
     count.append(list)
     division.append(count)
+})
+document.getElementById("guess-analysis-btn").addEventListener("click", (e) => {
+    if (gameOver) {return}
+    if (guessesRemaining === 6) { return }
+    resetOptimizer()
+
+    let division = document.getElementById("guess-analysis")
+    let previousWord = document.createElement("p")
+    previousWord.setAttribute('id','previous-word')
+    previousWord.textContent = `Analysis for the guess "${previousGuess.toUpperCase()}":`
+    division.append(previousWord)
 })
 
 function resetKeyboard() {
@@ -144,6 +181,14 @@ function resetGameboard() {
 function resetOptimizer() {
     if (document.contains(document.getElementById("solutions-count"))) {
         document.getElementById("solutions-count").remove()
+    }
+
+    if (document.contains(document.getElementById("optimal-guess-count"))) {
+        document.getElementById("optimal-guess-count").remove()
+    }
+
+    if (document.contains(document.getElementById('previous-word'))) {
+        document.getElementById('previous-word').remove()
     }
 }
 
@@ -178,6 +223,11 @@ function checkGuess() {
         return
     }
 
+    resetOptimizer()
+    previousGuess = ''
+    for (const letter of currentGuess) {
+        previousGuess += letter
+    }
     possibleSolutions = determinePossibleSolutions(currentGuess,solution,possibleSolutions)
     console.log("number of possible solutions now: " + possibleSolutions.length)
 
@@ -192,6 +242,7 @@ function checkGuess() {
     if(guessString === gameSolution) {
         // alert("You guessed right! Game over!")
         guessesRemaining = 0
+        gameOver = true;
         return
     } else {
         guessesRemaining -= 1
@@ -200,6 +251,8 @@ function checkGuess() {
 
         if (guessesRemaining === 0) {
             alert("You've run out of guesses. The right word was '" + gameSolution + "'")
+            gameOver = true;
+            return
         }
     }
 
@@ -366,7 +419,7 @@ function findOptimalWords(possible_solutions_list) {
     let stdDevs = {}
 
     GUESSWORDS.forEach(guess => {
-        stdDevs[guess.join('')] = calculateStandardDeviation(evaluateWord(guess,possible_solutions_list))
+        stdDevs[guess] = calculateStandardDeviation(evaluateWord([...guess],possible_solutions_list))
     })
     let minStdDev = Math.min(...Object.values(stdDevs))
     let bestGuesses = Object.keys(stdDevs).filter(word => stdDevs[word] == minStdDev)
@@ -387,14 +440,4 @@ function determinePossibleSolutions(guess,ans,possibleSolutions) {
         }
     })
     return newPossibleSolutions
-}
-
-// console.log(determinePossibleSolutions(['r','o','a','t','e'],['r','a','i','n','y'], starting_possible_solutions_list))
-
-function validateInput() {
-    return
-}
-
-function play() {
-    return
 }
