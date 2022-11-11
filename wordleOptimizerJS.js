@@ -13,7 +13,7 @@ let previousGuess = '';
 let previousPossibleSolutions = [...SOLUTIONWORDS]
 let nextLetter = 0;
 let gameSolution = SOLUTIONWORDS[Math.floor(Math.random() * SOLUTIONWORDS.length)]
-let gameOver = false;
+let gameOver = true;
 
 function resetGame() {
     possibleSolutions = [...SOLUTIONWORDS]
@@ -91,6 +91,10 @@ document.getElementById("custom").addEventListener("click", (e) => {
     }
     gameSolution = requestedSolution
 
+    if (!gameSolution) {
+        resetGame()
+    }
+
 
 
     console.log("new game")
@@ -101,7 +105,9 @@ document.getElementById("custom").addEventListener("click", (e) => {
 document.getElementById("possible-solutions-btn").addEventListener("click", (e) => {
     if (gameOver) {return}
     resetOptimizer()
-    // writeClearButton()
+
+    let loader = document.getElementById("possible-solutions-loader")
+    loader.style.display = 'inherit'
 
     let division = document.getElementById("possible-solutions")
     let count = document.createElement("div")
@@ -123,6 +129,9 @@ document.getElementById("next-guess-btn").addEventListener("click", (e) => {
     if (gameOver) {return}
     resetOptimizer()
     // writeClearButton()
+
+    let loader = document.getElementById("next-guess-loader")
+    loader.style.display = 'inherit'
 
     let optimalGuesses = findOptimalWords()
 
@@ -166,8 +175,13 @@ document.getElementById("next-guess-btn").addEventListener("click", (e) => {
 document.getElementById("guess-analysis-btn").addEventListener("click", (e) => {
     // if (gameOver) {return}
     // if (guessesRemaining === 6) { return }
-    // writeClearButton()
+
+    if (previousGuess === '') {return}
     resetOptimizer()
+
+    let loader = document.getElementById("guess-analysis-loader")
+    loader.style.display = 'inherit'
+    
 
     let division = document.getElementById("guess-analysis")
     let previousWord = document.createElement("p")
@@ -185,8 +199,8 @@ document.getElementById("guess-analysis-btn").addEventListener("click", (e) => {
     analysis1.setAttribute('id', 'percentile')
     console.log("blah " + previousPossibleSolutions.length)
     console.log("blah " + typeof(previousPossibleSolutions.length))
-    if (!previousPossibleSolutions.length <= 2 ) { // && !previousPossibleSolutions.includes(previousGuess)) {
-        
+    console.log(previousPossibleSolutions.length <= 2)
+    if (!(previousPossibleSolutions.length <= 2) ) { // && !previousPossibleSolutions.includes(previousGuess)) {
         analysis1.textContent = `percentile: ${Math.round(percentile)}th`
     } else {
         analysis1.textContent = `percentile: 100th`
@@ -234,6 +248,7 @@ function resetOptimizer() {
     if (document.contains(document.getElementById("solutions-count"))) {
         document.getElementById("solutions-count").remove()
     }
+
 
     if (document.contains(document.getElementById("optimal-guess-count"))) {
         document.getElementById("optimal-guess-count").remove()
