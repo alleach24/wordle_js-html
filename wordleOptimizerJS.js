@@ -10,9 +10,22 @@ console.log("number of possible solutions now: " + possibleSolutions.length)
 let guessesRemaining = NUMBER_OF_GUESSES;
 let currentGuess = [];
 let previousGuess = '';
+let previousPossibleSolutions = [...SOLUTIONWORDS]
 let nextLetter = 0;
 let gameSolution = SOLUTIONWORDS[Math.floor(Math.random() * SOLUTIONWORDS.length)]
 let gameOver = false;
+
+function resetGame() {
+    possibleSolutions = [...SOLUTIONWORDS]
+    console.log("number of possible solutions now: " + possibleSolutions.length)
+    guessesRemaining = NUMBER_OF_GUESSES;
+    currentGuess = [];
+    previousGuess = '';
+    previousPossibleSolutions = [...SOLUTIONWORDS]
+    nextLetter = 0;
+    gameSolution = SOLUTIONWORDS[Math.floor(Math.random() * SOLUTIONWORDS.length)]
+    gameOver = false;
+}
 
 console.log("solution word: " + gameSolution)
 
@@ -40,8 +53,6 @@ document.addEventListener("keyup", (e) => {
         insertLetter(pressedKey)
     } 
 })
-
-
 // get letter input from clicking the on-screen keyboard
 document.getElementById("keyboard-container").addEventListener("click", (e) => {
     const target = e.target
@@ -57,14 +68,12 @@ document.getElementById("keyboard-container").addEventListener("click", (e) => {
 
     document.dispatchEvent(new KeyboardEvent("keyup", {'key': key}))
 })
+
+
 document.getElementById("random").addEventListener("click", (e) => {
     // const target = e.target
     
-    guessesRemaining = NUMBER_OF_GUESSES;
-    possibleSolutions = [...SOLUTIONWORDS]
-    currentGuess = [];
-    nextLetter = 0;
-    gameSolution = SOLUTIONWORDS[Math.floor(Math.random() * SOLUTIONWORDS.length)]
+    resetGame()
     resetKeyboard()
     resetGameboard()
     resetOptimizer()
@@ -72,21 +81,27 @@ document.getElementById("random").addEventListener("click", (e) => {
     console.log("solution word: " + gameSolution)
 })
 document.getElementById("custom").addEventListener("click", (e) => {
-    guessesRemaining = NUMBER_OF_GUESSES;
-    currentGuess = [];
-    nextLetter = 0;
-    let possibleSolutions = [...SOLUTIONWORDS]
-    // gameSolution = SOLUTIONWORDS[Math.floor(Math.random() * SOLUTIONWORDS.length)]
-
+    resetGame()
     resetKeyboard()
     resetGameboard()
     resetOptimizer()
+    let requestedSolution = window.prompt("Enter the solution word: ").toLowerCase()
+    while (!SOLUTIONWORDS.includes(requestedSolution)) {
+        requestedSolution = window.prompt("Invalid solution. Enter a valid solution word:\n(Hint: word must be 5 letters)").toLowerCase()
+    }
+    gameSolution = requestedSolution
+
+
+
     console.log("new game")
     console.log("solution word: " + gameSolution)
 })
+
+
 document.getElementById("possible-solutions-btn").addEventListener("click", (e) => {
     if (gameOver) {return}
     resetOptimizer()
+    // writeClearButton()
 
     let division = document.getElementById("possible-solutions")
     let count = document.createElement("div")
@@ -107,8 +122,9 @@ document.getElementById("possible-solutions-btn").addEventListener("click", (e) 
 document.getElementById("next-guess-btn").addEventListener("click", (e) => {
     if (gameOver) {return}
     resetOptimizer()
+    // writeClearButton()
 
-    let optimalGuesses = findOptimalWords(possibleSolutions)
+    let optimalGuesses = findOptimalWords()
 
     let division = document.getElementById("next-guess")
     let count = document.createElement("div")
@@ -148,8 +164,9 @@ document.getElementById("next-guess-btn").addEventListener("click", (e) => {
     division.append(count)
 })
 document.getElementById("guess-analysis-btn").addEventListener("click", (e) => {
-    if (gameOver) {return}
-    if (guessesRemaining === 6) { return }
+    // if (gameOver) {return}
+    // if (guessesRemaining === 6) { return }
+    // writeClearButton()
     resetOptimizer()
 
     let division = document.getElementById("guess-analysis")
@@ -157,7 +174,42 @@ document.getElementById("guess-analysis-btn").addEventListener("click", (e) => {
     previousWord.setAttribute('id','previous-word')
     previousWord.textContent = `Analysis for the guess "${previousGuess.toUpperCase()}":`
     division.append(previousWord)
+
+    let analysis = document.createElement("div")
+    analysis.setAttribute('id', 'guess-analysis-div')
+    let analysisInfo = guessAnalysis()
+    let percentile = analysisInfo[0]
+    let bestGuesses = analysisInfo[1]
+
+    let analysis1 = document.createElement("p")
+    analysis1.setAttribute('id', 'percentile')
+    console.log("blah " + previousPossibleSolutions.length)
+    console.log("blah " + typeof(previousPossibleSolutions.length))
+    if (!previousPossibleSolutions.length <= 2 ) { // && !previousPossibleSolutions.includes(previousGuess)) {
+        
+        analysis1.textContent = `percentile: ${Math.round(percentile)}th`
+    } else {
+        analysis1.textContent = `percentile: 100th`
+    }
+    analysis.append(analysis1)
+    
+    let analysis2 = document.createElement("p")
+    analysis2.setAttribute('id', 'better-guess')
+    if (!bestGuesses.includes(previousGuess) && previousPossibleSolutions.length > 2){
+        analysis2.textContent = `An optimal guess would have been "${bestGuesses[0].toUpperCase()}"`
+    } else if (!previousPossibleSolutions.includes(previousGuess) && previousPossibleSolutions.length <= 2) {
+        analysis2.textContent = `An optimal guess would have been "${previousPossibleSolutions[0].toUpperCase()}"`
+    } else {
+        analysis2.textContent = `"${previousGuess.toUpperCase()}" was an optimal guess!`
+    }
+
+    analysis.append(analysis2)
+    division.append(analysis)
 })
+document.getElementById("clear-button").addEventListener("click", (e) => {
+    resetOptimizer()
+})
+
 
 function resetKeyboard() {
     let keys = document.getElementsByClassName("keyboard-button")
@@ -189,6 +241,10 @@ function resetOptimizer() {
 
     if (document.contains(document.getElementById('previous-word'))) {
         document.getElementById('previous-word').remove()
+    }
+    
+    if (document.contains(document.getElementById('guess-analysis-div'))) {
+        document.getElementById('guess-analysis-div').remove()
     }
 }
 
@@ -228,6 +284,7 @@ function checkGuess() {
     for (const letter of currentGuess) {
         previousGuess += letter
     }
+    previousPossibleSolutions = [...possibleSolutions]
     possibleSolutions = determinePossibleSolutions(currentGuess,solution,possibleSolutions)
     console.log("number of possible solutions now: " + possibleSolutions.length)
 
@@ -271,6 +328,7 @@ function insertLetter(pressedKey) {
     nextLetter += 1
 }
 
+
 function changeBoardColors(colorCode, row) {
     for (let i = 0; i < 5; i++) {
         let box = row.children[i]
@@ -290,7 +348,6 @@ function changeBoardColors(colorCode, row) {
         }
     }
 }
-
 function shadeKeyboard(letter, color) {
     for (const elem of document.getElementsByClassName("keyboard-button")) {
         if (elem.textContent === letter) {
@@ -311,7 +368,32 @@ function shadeKeyboard(letter, color) {
 }
 
 
+function guessAnalysis() {
+    let stdDevs = {}
 
+    let previousGuessStdDev = calculateStandardDeviation(evaluateWord([...previousGuess], previousPossibleSolutions))
+    console.log("previous guess stddev " + previousGuessStdDev)
+    let betterGuesses = 0
+    let worseGuesses = 0
+
+    GUESSWORDS.forEach(guess => {
+        let newGuessStdDev = calculateStandardDeviation(evaluateWord([...guess],previousPossibleSolutions))
+        stdDevs[guess] = newGuessStdDev
+        // console.log(newGuessStdDev)
+        if (newGuessStdDev < previousGuessStdDev) {
+            betterGuesses += 1
+        } else if (newGuessStdDev > previousGuessStdDev) {
+            worseGuesses += 1
+        }
+    })
+
+    let minStdDev = Math.min(...Object.values(stdDevs))
+    let bestGuesses = Object.keys(stdDevs).filter(word => stdDevs[word] == minStdDev)
+
+    let percentile = worseGuesses / GUESSWORDS.length * 100
+
+    return [percentile, bestGuesses]
+}
 
 
 function buildColorCode(guess, solution) {
@@ -351,11 +433,6 @@ function buildColorCode(guess, solution) {
     // console.log(colorCodeArr.join(''))
     return colorCodeArr.join('')
 }
-
-// buildColorCode(['a','b','c','d','e'],['e','d','c','b','x'])
-// buildColorCode(['k','a','y','a','k'],['a','w','a','k','e'])
-
-
 function evaluateWord(guess, possibleSolutionsList) {
     let buckets = {'00000': 0, '00001': 0, '00002': 0, '00010': 0, '00011': 0, '00012': 0, 
     '00020': 0, '00021': 0, '00022': 0, '00100': 0, '00101': 0, '00102': 0, '00110': 0, 
@@ -401,34 +478,22 @@ function evaluateWord(guess, possibleSolutionsList) {
     // console.log(buckets)
     return buckets
 }
-
-// let testBuckets = evaluateWord(['r','o','a','t','e'], starting_possible_solutions_list)
-
-
 function calculateStandardDeviation(buckets) {
     let bucketVals = Object.values(buckets)
     let mean = bucketVals.reduce((partialSum,a) => { return partialSum+a }, 0) / bucketVals.length;
 
     return Math.sqrt(bucketVals.reduce((partialSum,a)=> partialSum+((a - mean) ** 2),0) / bucketVals.length)
 }
-
-// calculateStandardDeviation(testBuckets)
-
-
-function findOptimalWords(possible_solutions_list) {
+function findOptimalWords() {
     let stdDevs = {}
 
     GUESSWORDS.forEach(guess => {
-        stdDevs[guess] = calculateStandardDeviation(evaluateWord([...guess],possible_solutions_list))
+        stdDevs[guess] = calculateStandardDeviation(evaluateWord([...guess],possibleSolutions))
     })
     let minStdDev = Math.min(...Object.values(stdDevs))
     let bestGuesses = Object.keys(stdDevs).filter(word => stdDevs[word] == minStdDev)
     return bestGuesses
 }
-
-// console.log(findOptimalWords(starting_possible_solutions_list))
-
-
 function determinePossibleSolutions(guess,ans,possibleSolutions) {
     let newPossibleSolutions = []
     let colorCode = buildColorCode(guess,ans)

@@ -30,7 +30,7 @@ h1 {
 }
 
 .btn {
-    margin-bottom: 100px;
+    margin-bottom: 30px;
     margin-top: 20px;
 }
 
@@ -64,7 +64,9 @@ h2 {
 
 
 .letter-box {
-    border: 2px solid rgb(194, 194, 194);
+    /* border: 2px solid rgb(194, 194, 194); */
+    border: 2px solid black;
+    background-color: black;
     margin: 2px;
     font-size: 25px;
     font-weight: 700;
@@ -122,4 +124,10 @@ h2 {
 
 #solutions-count {
     font-size: 20px;
+}
+
+#clear-button {
+    font-size: 12px;
+    margin-bottom: 20px;
+    cursor: pointer;
 }
