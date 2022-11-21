@@ -14,7 +14,10 @@ let previousPossibleSolutions = [...SOLUTIONWORDS]
 let nextLetter = 0;
 let gameSolution = SOLUTIONWORDS[Math.floor(Math.random() * SOLUTIONWORDS.length)]
 let gameOver = true;
+console.log("solution word: " + gameSolution)
 
+
+// functions to reset the game board
 function resetGame() {
     possibleSolutions = [...SOLUTIONWORDS]
     console.log("number of possible solutions now: " + possibleSolutions.length)
@@ -26,8 +29,44 @@ function resetGame() {
     gameSolution = SOLUTIONWORDS[Math.floor(Math.random() * SOLUTIONWORDS.length)]
     gameOver = false;
 }
+function resetKeyboard() {
+    let keys = document.getElementsByClassName("keyboard-button")
+    for (let i = 0; i < keys.length; i++) {
+        keys[i].style.backgroundColor = ''
+        keys[i].style.color = ''
+    }
+}
+function resetGameboard() {
+    let rows = document.getElementsByClassName("letter-row")
+    for (let i = 0; i < rows.length; i++) {
+        let boxes = rows[i].children
+        for (let j = 0; j < boxes.length; j++) {
+            boxes[j].style.backgroundColor = 'white'
+            boxes[j].style.color = 'black'
+            boxes[j].style.border = '2px solid rgb(194, 194, 194)'
+            boxes[j].textContent = ''
+        }
+    }
+}
+function resetOptimizer() {
+    if (document.contains(document.getElementById("solutions-count"))) {
+        document.getElementById("solutions-count").remove()
+    }
 
-console.log("solution word: " + gameSolution)
+
+    if (document.contains(document.getElementById("optimal-guess-count"))) {
+        document.getElementById("optimal-guess-count").remove()
+    }
+
+    if (document.contains(document.getElementById('previous-word'))) {
+        document.getElementById('previous-word').remove()
+    }
+    
+    if (document.contains(document.getElementById('guess-analysis-div'))) {
+        document.getElementById('guess-analysis-div').remove()
+    }
+}
+
 
 // get letter input from user's keyboard
 document.addEventListener("keyup", (e) => {
@@ -70,6 +109,7 @@ document.getElementById("keyboard-container").addEventListener("click", (e) => {
 })
 
 
+// create a random game
 document.getElementById("random").addEventListener("click", (e) => {
     // const target = e.target
     
@@ -80,6 +120,7 @@ document.getElementById("random").addEventListener("click", (e) => {
     console.log("new game")
     console.log("solution word: " + gameSolution)
 })
+// create a custom game
 document.getElementById("custom").addEventListener("click", (e) => {
     resetGame()
     resetKeyboard()
@@ -102,6 +143,8 @@ document.getElementById("custom").addEventListener("click", (e) => {
 })
 
 
+// Optimizer functionality
+// reveal possible solutions button
 document.getElementById("possible-solutions-btn").addEventListener("click", (e) => {
     if (gameOver) {return}
     resetOptimizer()
@@ -125,13 +168,22 @@ document.getElementById("possible-solutions-btn").addEventListener("click", (e) 
     count.append(list)    
     division.append(count)
 })
+
+// reveal the optimal next guess button
 document.getElementById("next-guess-btn").addEventListener("click", (e) => {
+    console.log("execute 1")
+    // let loader = document.getElementById("next-guess-loader")
+    // loader.style.display = 'inherit'
+    document.getElementById("next-guess-btn").style.color = "red"
+    console.log("done 1")
+})
+document.getElementById("next-guess-btn").addEventListener("click", (e) => {
+    console.log("execute 2")
     if (gameOver) {return}
     resetOptimizer()
-    // writeClearButton()
 
-    let loader = document.getElementById("next-guess-loader")
-    loader.style.display = 'inherit'
+    // let loader = document.getElementById("next-guess-loader")
+    // loader.style.display = 'inherit'
 
     let optimalGuesses = findOptimalWords()
 
@@ -171,7 +223,10 @@ document.getElementById("next-guess-btn").addEventListener("click", (e) => {
     
     count.append(list)
     division.append(count)
+    console.log("done 2")
 })
+
+// reveal analysis on your previous guess button
 document.getElementById("guess-analysis-btn").addEventListener("click", (e) => {
     // if (gameOver) {return}
     // if (guessesRemaining === 6) { return }
@@ -220,51 +275,14 @@ document.getElementById("guess-analysis-btn").addEventListener("click", (e) => {
     analysis.append(analysis2)
     division.append(analysis)
 })
+
+// clear the optimizer infomration button
 document.getElementById("clear-button").addEventListener("click", (e) => {
     resetOptimizer()
 })
 
 
-function resetKeyboard() {
-    let keys = document.getElementsByClassName("keyboard-button")
-    for (let i = 0; i < keys.length; i++) {
-        keys[i].style.backgroundColor = ''
-        keys[i].style.color = ''
-    }
-}
-function resetGameboard() {
-    let rows = document.getElementsByClassName("letter-row")
-    for (let i = 0; i < rows.length; i++) {
-        let boxes = rows[i].children
-        for (let j = 0; j < boxes.length; j++) {
-            boxes[j].style.backgroundColor = 'white'
-            boxes[j].style.color = 'black'
-            boxes[j].style.border = '2px solid rgb(194, 194, 194)'
-            boxes[j].textContent = ''
-        }
-    }
-}
-function resetOptimizer() {
-    if (document.contains(document.getElementById("solutions-count"))) {
-        document.getElementById("solutions-count").remove()
-    }
-
-
-    if (document.contains(document.getElementById("optimal-guess-count"))) {
-        document.getElementById("optimal-guess-count").remove()
-    }
-
-    if (document.contains(document.getElementById('previous-word'))) {
-        document.getElementById('previous-word').remove()
-    }
-    
-    if (document.contains(document.getElementById('guess-analysis-div'))) {
-        document.getElementById('guess-analysis-div').remove()
-    }
-}
-
-
-
+// Gameplay functions
 function deleteLetter() {
     let row = document.getElementsByClassName("letter-row")[6-guessesRemaining]
     let box = row.children[nextLetter - 1]
@@ -342,8 +360,6 @@ function insertLetter(pressedKey) {
     currentGuess.push(pressedKey)
     nextLetter += 1
 }
-
-
 function changeBoardColors(colorCode, row) {
     for (let i = 0; i < 5; i++) {
         let box = row.children[i]
@@ -383,6 +399,7 @@ function shadeKeyboard(letter, color) {
 }
 
 
+// Optimization functions
 function guessAnalysis() {
     let stdDevs = {}
 
@@ -409,8 +426,6 @@ function guessAnalysis() {
 
     return [percentile, bestGuesses]
 }
-
-
 function buildColorCode(guess, solution) {
     // console.log(guess)
     // console.log(solution)
